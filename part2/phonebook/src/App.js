@@ -1,27 +1,33 @@
-import { useState } from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
 import { Filter } from "./Filter";
+
 import { Form } from "./Form";
 import { ShowAllContacts } from "./ShowAllContacts";
 import { ShowFilteredContacts } from "./ShowFilteredContacts";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-    { name: "Arto Hellas", number: "040-123456", id: 5 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 6 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [filtered, setFiltered] = useState("");
 
+  const getData = () => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log(response);
+      setPersons(response.data);
+    });
+  };
+
+  useEffect(getData, []);
+
   const handleInputName = (e) => {
+    console.log(e.target.value);
     setNewName(e.target.value);
   };
 
   const handleInputNumber = (e) => {
+    console.log(e.target.value);
     setPhoneNumber(e.target.value);
   };
 
@@ -32,6 +38,7 @@ const App = () => {
   const isRepeated = persons.some((person) => person.name === newName);
 
   const handleSubmitForm = (e) => {
+    console.log("clicked");
     e.preventDefault();
     const newEntry = {
       name: newName,
