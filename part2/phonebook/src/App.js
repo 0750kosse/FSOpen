@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
 
-function App() {
+const App = () => {
+  const [persons, setPersons] = useState([{ name: "Arto Hellas", id: 1 }]);
+  const [newName, setNewName] = useState("");
+
+  const handleInputChange = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const isRepeated = persons.some((person) => person.name === newName);
+
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    const newEntry = {
+      name: newName,
+      id: persons.length + 1,
+    };
+
+    isRepeated
+      ? alert(`${newName} already exists`)
+      : setPersons([...persons, newEntry]);
+    setNewName("");
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Phonebook</h2>
+      <form onSubmit={handleSubmitForm}>
+        <div>
+          name: <input onChange={handleInputChange} value={newName} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      {persons.map((person) => {
+        console.log(persons);
+
+        return <p key={person.id}>{person.name}</p>;
+      })}
     </div>
   );
-}
+};
 
 export default App;
