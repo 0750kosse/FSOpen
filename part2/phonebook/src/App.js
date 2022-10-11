@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { Filter } from "./Filter";
+import { Form } from "./Form";
+import { ShowAllContacts } from "./ShowAllContacts";
+import { ShowFilteredContacts } from "./ShowFilteredContacts";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -46,54 +50,36 @@ const App = () => {
     return person.name.toLowerCase().includes(filtered.toLowerCase());
   });
 
-  const ShowFilteredContacts = () => {
-    return filteredNames.map((person) => {
-      return (
-        <p key={person.id}>
-          {person.name} : {person.number}
-        </p>
-      );
-    });
-  };
-
-  const ShowAllContacts = () => {
-    return persons.map((person) => {
-      return (
-        <p key={person.id}>
-          {person.name} : {person.number}
-        </p>
-      );
-    });
-  };
-
   return (
     <div>
       <h2>Phonebook</h2>
       <div>
-        Filter by name:{" "}
-        <input onChange={handleInputFilter} value={filtered} required />
+        <Filter
+          title="Filter by name:"
+          onChange={handleInputFilter}
+          value={filtered}
+          required
+        />
       </div>
-      {}
-      <br />
-      <form onSubmit={handleSubmitForm}>
-        <div>
-          name: <input onChange={handleInputName} value={newName} required />
-        </div>
-        <div>
-          phone:
-          <input
-            onChange={handleInputNumber}
-            value={phoneNumber}
-            type="number"
-            required
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {filtered.length === 0 ? <ShowAllContacts /> : <ShowFilteredContacts />}
+      <h3>Add a new</h3>
+      <div>
+        <Form
+          onSubmit={handleSubmitForm}
+          onNameInput={handleInputName}
+          nameValue={newName}
+          required
+          onNumberInput={handleInputNumber}
+          numberValue={phoneNumber}
+          type="number"
+        />
+      </div>
+
+      <h3>Numbers</h3>
+      {filtered.length === 0 ? (
+        <ShowAllContacts persons={persons} />
+      ) : (
+        <ShowFilteredContacts filteredNames={filteredNames} persons={persons} />
+      )}
     </div>
   );
 };
