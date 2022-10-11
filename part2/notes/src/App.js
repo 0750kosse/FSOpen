@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Note from "./components/Note";
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note");
   const [showAll, setShowAll] = useState(true);
 
+  const getData = () => {
+    axios.get("http://localhost:3001/notes").then((res) => setNotes(res.data));
+  };
+
+  useEffect(getData, []);
+
   const addNote = (e) => {
     e.preventDefault();
-    console.log("clicked", e.target);
     const noteObject = {
       content: newNote,
       date: new Date().toISOString(),
@@ -20,7 +26,6 @@ const App = (props) => {
   };
 
   const handleNoteChange = (e) => {
-    console.log(e.target.value);
     setNewNote(e.target.value);
   };
 
