@@ -6,7 +6,7 @@ import { Country } from "./components/Country";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [userInput, setUserInput] = useState("");
-
+  // If userInput exists, fetches countries data & 'sets' it to state
   const getData = () => {
     if (userInput)
       axios
@@ -15,11 +15,15 @@ const App = () => {
           setCountries(res.data);
         });
   };
-
+  // Grab userInput
   const handleChange = (e) => {
     setUserInput(e.target.value);
   };
 
+  const handleClick = (countryName) => {
+    setUserInput(countryName);
+  };
+  // useEffect only fires whenever userInput is changed
   useEffect(getData, [userInput]);
 
   return (
@@ -29,7 +33,7 @@ const App = () => {
       {countries.length > 10 ? (
         <p>Too many results,keep typing to narrow your search</p>
       ) : (
-        <Country countries={countries} />
+        <Country countries={countries} onClick={handleClick} />
       )}
     </div>
   );
