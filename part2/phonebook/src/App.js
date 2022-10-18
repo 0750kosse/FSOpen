@@ -14,7 +14,6 @@ const App = () => {
 
   const getData = () => {
     axios.get("http://localhost:3001/persons").then((response) => {
-      console.log(response);
       setPersons(response.data);
     });
   };
@@ -22,7 +21,6 @@ const App = () => {
   useEffect(getData, []);
 
   const handleInputName = (e) => {
-    console.log(e.target.value);
     setNewName(e.target.value);
   };
 
@@ -38,7 +36,6 @@ const App = () => {
   const isRepeated = persons.some((person) => person.name === newName);
 
   const handleSubmitForm = (e) => {
-    console.log("clicked");
     e.preventDefault();
     const newEntry = {
       name: newName,
@@ -49,8 +46,12 @@ const App = () => {
     isRepeated
       ? alert(`${newName} already exists`)
       : setPersons([...persons, newEntry]);
-    setNewName("");
-    setPhoneNumber("");
+
+    e.target.reset();
+
+    axios
+      .post("http://localhost:3001/persons", newEntry)
+      .then((res) => setPersons([...persons, res.data]));
   };
 
   const filteredNames = persons.filter((person) => {
@@ -60,6 +61,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
       <div>
         <Filter
           title="Filter by name:"
@@ -80,7 +82,6 @@ const App = () => {
           type="number"
         />
       </div>
-
       <h3>Numbers</h3>
       {filtered.length === 0 ? (
         <ShowAllContacts persons={persons} />
