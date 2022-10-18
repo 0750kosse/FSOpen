@@ -29,6 +29,21 @@
       "name": "Lebron James",
       "id": 6,
       "number": "1234567890"
+    },
+    {
+      "name": "jhon Hernangomez",
+      "id": 7,
+      "number": "432156"
+    },
+    {
+      "name": "felipe Gonzalez",
+      "id": 8,
+      "number": "09877654"
+    },
+    {
+      "name": "maria de la o",
+      "id": 9,
+      "number": "23323323"
     }
   ]
 }

@@ -1,10 +1,9 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { Filter } from "./Filter";
-
-import { Form } from "./Form";
-import { ShowAllContacts } from "./ShowAllContacts";
-import { ShowFilteredContacts } from "./ShowFilteredContacts";
+import contactService from "./services/contacts";
+import { Filter } from "./components/Filter";
+import { Form } from "./components/Form";
+import { ShowAllContacts } from "./components/ShowAllContacts";
+import { ShowFilteredContacts } from "./components/ShowFilteredContacts";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,8 +12,8 @@ const App = () => {
   const [filtered, setFiltered] = useState("");
 
   const getData = () => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    contactService.getAllContacts().then((initialContacts) => {
+      setPersons(initialContacts);
     });
   };
 
@@ -25,7 +24,6 @@ const App = () => {
   };
 
   const handleInputNumber = (e) => {
-    console.log(e.target.value);
     setPhoneNumber(e.target.value);
   };
 
@@ -49,9 +47,9 @@ const App = () => {
 
     e.target.reset();
 
-    axios
-      .post("http://localhost:3001/persons", newEntry)
-      .then((res) => setPersons([...persons, res.data]));
+    contactService
+      .createContact(newEntry)
+      .then((newContact) => setPersons([...persons, newContact]));
   };
 
   const filteredNames = persons.filter((person) => {
