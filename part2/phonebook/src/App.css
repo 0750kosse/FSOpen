@@ -7,6 +7,15 @@
   pointer-events: none;
 }
 
+.contact {
+  display: flex;
+  align-items: center;
+}
+
+.contact-name {
+width: 60%;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

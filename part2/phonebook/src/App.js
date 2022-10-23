@@ -1,3 +1,4 @@
+import "./App.css";
 import { useState, useEffect } from "react";
 import contactService from "./services/contacts";
 import { Filter } from "./components/Filter";
@@ -31,13 +32,21 @@ const App = () => {
     setFiltered(e.target.value);
   };
 
+  const handleDeleteContact = (id) => {
+    //find the person which id equals 'id'
+    const contact = persons.find((person) => person.id === id);
+    window.confirm(`Do you want to delete ${contact.name}?`);
+    contactService
+      .deleteContact(id)
+      .then(() => setPersons(persons.filter((person) => person.id !== id)));
+  };
+
   const isRepeated = persons.some((person) => person.name === newName);
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
     const newEntry = {
       name: newName,
-      id: persons.length + 1,
       number: phoneNumber,
     };
 
@@ -82,9 +91,17 @@ const App = () => {
       </div>
       <h3>Numbers</h3>
       {filtered.length === 0 ? (
-        <ShowAllContacts persons={persons} />
+        <ShowAllContacts
+          persons={persons}
+          onClick={handleDeleteContact}
+          title="delete"
+        />
       ) : (
-        <ShowFilteredContacts filteredNames={filteredNames} persons={persons} />
+        <ShowFilteredContacts
+          filteredNames={filteredNames}
+          onClick={handleDeleteContact}
+          title="delete"
+        />
       )}
     </div>
   );

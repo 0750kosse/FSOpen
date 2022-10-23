@@ -11,4 +11,9 @@ const createContact = (newEntry) => {
   return request.then((res) => res.data);
 };
 
-export default { getAllContacts, createContact };
+const deleteContact = (id) => {
+  const request = axios.delete(baseUrl + `/${id}`, id);
+  return request.then((res) => res.data);
+};
+
+export default { getAllContacts, createContact, deleteContact };
