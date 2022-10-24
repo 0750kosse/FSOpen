@@ -4,7 +4,7 @@ export const ShowFilteredContacts = ({ filteredNames, title, onClick }) => {
   return filteredNames.map((person) => {
     return (
       <Person
-        key={person.name}
+        key={person.id}
         name={person.name}
         number={person.number}
         title={title}

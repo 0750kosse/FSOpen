@@ -41,7 +41,25 @@ const App = () => {
       .then(() => setPersons(persons.filter((person) => person.id !== id)));
   };
 
-  const isRepeated = persons.some((person) => person.name === newName);
+  const handleUpdateContact = (id) => {
+    // contact finds the person whose details will be updated & updatedContact returns the contact's updated contact details
+    const contact = persons.find((person) => person.name === newName);
+    const updatedContact = { ...contact, number: phoneNumber };
+
+    window.confirm(
+      `Do you want to update ${contact.name} with number : ${updatedContact.number}?`
+    );
+    contactService
+      .updateContact(contact.id, updatedContact)
+      .then((updatedContact) => {
+        setPersons(
+          persons.map((contact) =>
+            contact.id !== id ? contact : { ...persons, updatedContact }
+          )
+        );
+        getData();
+      });
+  };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
@@ -50,15 +68,15 @@ const App = () => {
       number: phoneNumber,
     };
 
+    const isRepeated = persons.some((person) => person.name === newName);
+
     isRepeated
-      ? alert(`${newName} already exists`)
-      : setPersons([...persons, newEntry]);
+      ? handleUpdateContact()
+      : contactService
+          .createContact(newEntry)
+          .then((newContact) => setPersons([...persons, newContact]));
 
     e.target.reset();
-
-    contactService
-      .createContact(newEntry)
-      .then((newContact) => setPersons([...persons, newContact]));
   };
 
   const filteredNames = persons.filter((person) => {
@@ -68,7 +86,6 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
       <div>
         <Filter
           title="Filter by name:"
