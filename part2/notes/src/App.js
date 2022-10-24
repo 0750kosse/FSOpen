@@ -1,12 +1,15 @@
+import "./App.css";
 import { useState, useEffect } from "react";
 
 import Note from "./components/Note";
 import notesServices from "./services/notes";
+import { Notification } from "./components/Notification";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note");
   const [showAll, setShowAll] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     notesServices.getAll().then((initialNotes) => {
@@ -46,12 +49,12 @@ const App = () => {
       .then((changedNote) =>
         setNotes(notes.map((note) => (note.id !== id ? note : changedNote)))
       )
-      //alerts user
+      //catches error & display temporary error message, then timeout sets error to null again
       .catch((e) => {
-        console.log(
-          `the note '${note.content}' was already deleted from server`,
-          e
-        );
+        setErrorMessage(`Note ${note.content} was already deleted from server`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
         // the deleted note gets filtered out from state
         setNotes(notes.filter((note) => note.id !== id));
       });
@@ -60,6 +63,8 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      {/* Notification will only show if trying to change deleted note */}
+      <Notification message={errorMessage} />
       <button onClick={() => setShowAll(!showAll)}>
         show{showAll ? " important" : " all"}
       </button>
