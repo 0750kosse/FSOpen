@@ -15,6 +15,23 @@
 .contact-name {
 width: 60%;
 }
+.success {
+  color: green;
+  }
+
+.error {
+  color: red;
+}
+
+.success, .error {
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

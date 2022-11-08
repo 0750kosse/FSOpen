@@ -5,12 +5,15 @@ import { Filter } from "./components/Filter";
 import { Form } from "./components/Form";
 import { ShowAllContacts } from "./components/ShowAllContacts";
 import { ShowFilteredContacts } from "./components/ShowFilteredContacts";
+import { Notification } from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [filtered, setFiltered] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const getData = () => {
     contactService.getAllContacts().then((initialContacts) => {
@@ -39,6 +42,10 @@ const App = () => {
     contactService
       .deleteContact(id)
       .then(() => setPersons(persons.filter((person) => person.id !== id)));
+    setSuccessMessage(`Contact  ${contact.name} successfully deleted`);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
   };
 
   const handleUpdateContact = (id) => {
@@ -57,7 +64,17 @@ const App = () => {
             contact.id !== id ? contact : { ...persons, updatedContact }
           )
         );
+
+        setSuccessMessage(`Contact details for ${updatedContact.name} updated`);
         getData();
+      })
+      .catch((error) => {
+        setErrorMessage(
+          `Contact ${updatedContact.name} was already deleted from server`
+        );
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
 
@@ -72,9 +89,15 @@ const App = () => {
 
     isRepeated
       ? handleUpdateContact()
-      : contactService
-          .createContact(newEntry)
-          .then((newContact) => setPersons([...persons, newContact]));
+      : contactService.createContact(newEntry).then((newContact) => {
+          // setPersons([...persons, newContact]);
+          // 95: ensures we use the state last value
+          setPersons((persons) => [...persons, newContact]);
+          setSuccessMessage(`Added ${newContact.name}`);
+        });
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
 
     e.target.reset();
   };
@@ -86,6 +109,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} error />
+      <Notification message={successMessage} success />
       <div>
         <Filter
           title="Filter by name:"
@@ -103,10 +128,10 @@ const App = () => {
           required
           onNumberInput={handleInputNumber}
           numberValue={phoneNumber}
-          type="number"
         />
       </div>
       <h3>Numbers</h3>
+
       {filtered.length === 0 ? (
         <ShowAllContacts
           persons={persons}
