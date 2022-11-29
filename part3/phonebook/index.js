@@ -24,6 +24,14 @@ const data = [
   },
 ];
 
+app.get("/info", (req, res) => {
+  const timeOfRequest = new Date().toUTCString();
+  res.send(`
+  <h3>Phonebook has info for ${data.length} people</h3>
+  <p>${timeOfRequest}</p>
+ `);
+});
+
 app.get("/api/persons", (req, res) => {
   res.send(data);
 });
