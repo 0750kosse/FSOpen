@@ -57,6 +57,14 @@ app.post("/api/persons", (req, res) => {
     number: person.number,
   };
 
+  const personExists = persons.some((person) => person.name === newPerson.name);
+
+  if (!person.name || !person.number) {
+    res.status(400).json({ error: "name and number fields compulsory" });
+  } else if (personExists) {
+    res.status(400).json({ error: "name must be unique" });
+  }
+
   persons = [...persons, newPerson];
   res.status(201).json(newPerson);
 });
@@ -64,7 +72,9 @@ app.post("/api/persons", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   const person = persons.filter((person) => person.id === id);
-  res.status(204).end();
+  if (person.length === 0) {
+    res.status(404).json({ error: "id not found" });
+  } else res.status(204).end();
 });
 
 const PORT = 3001;
