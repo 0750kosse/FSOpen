@@ -1,7 +1,21 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 
 app.use(express.json());
+//logging data for exercise, but beware of data privacy GDPR!!!
+morgan.token("data", function data(req) {
+  return JSON.stringify({
+    name: req.body.name,
+    number: req.body.number,
+  });
+});
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms - :data"
+  )
+);
 
 let persons = [
   {
@@ -76,6 +90,12 @@ app.delete("/api/persons/:id", (req, res) => {
     res.status(404).json({ error: "id not found" });
   } else res.status(204).end();
 });
+
+const unknownEndPoint = (req, res) => {
+  res.status(404).send({ error: " unknown endpoint" });
+};
+
+app.use(unknownEndPoint);
 
 const PORT = 3001;
 app.listen(PORT, () => {
