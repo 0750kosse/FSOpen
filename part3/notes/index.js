@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 //json parser to access data easily, otherwise would b undefined
 app.use(express.json());
+app.use(cors());
 
 let notes = [
   {
