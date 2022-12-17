@@ -27,7 +27,7 @@ let notes = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("<h1>Express Application</h1>");
+  res.send("<h1>Express Application, add /api/notes to see the notes</h1>");
 });
 
 app.get("/api/notes", (req, res) => {
@@ -72,7 +72,13 @@ app.delete("/api/notes/:id", (req, res) => {
   res.status(204).end();
 });
 
-const PORT = process.env.PORT || 3001;
+const unknownEndPoint = (req, res) => {
+  res.status(404).send({ error: " unknown endpoint" });
+};
+
+app.use(unknownEndPoint);
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
