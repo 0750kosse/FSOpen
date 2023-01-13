@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "https://notesapp-backend.fly.dev/api/notes";
+const baseUrl = "https://phonebook-back-end.fly.dev/api/persons";
 
 const getAllContacts = () => {
   const request = axios.get(baseUrl);
