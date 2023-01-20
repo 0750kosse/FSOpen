@@ -46,3 +46,5 @@ Note.find({}).then((result) => {
   });
   mongoose.connection.close();
 });
+
+console.log(process.env);
