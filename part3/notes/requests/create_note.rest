@@ -2,12 +2,19 @@ POST http://localhost:3001/api/notes/
 Content-Type: application/json
 
 {
-  "content":"Learning nodeJS is fun",
+  "content":"Testing will be interesting",
   "important": true
 }
 
 ###
 
+POST http://localhost:3001/api/notes/
+Content-Type: application/json
+{
+  "content":"Cant wait for REDUX"
+  }
+
+###
 POST http://localhost:3001/api/notes/
 Content-Type: application/json
 

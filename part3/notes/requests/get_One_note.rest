@@ -1,1 +1,10 @@
-GET http://localhost:3001/api/notes/4
+
+GET http://localhost:3001/api/notes/63cc00de78e14784ec36781c
+###
+<!-- Correctly formatted id-->
+###
+
+GET http://localhost:3001/api/notes/6ca4a6b4118b7b3f054c3f7
+###
+<!-- Malformated id-->
+###

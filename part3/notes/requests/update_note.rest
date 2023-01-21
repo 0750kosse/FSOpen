@@ -1,0 +1,12 @@
+PUT http://localhost:3001/api/notes/63cc044418d8182c61a8ef85
+Content-Type: application/json
+
+{
+  "content":"Next lesson : Node & express",
+  "important": false
+}
+
+###
+
+PUT http://localhost:3001/api/notes/61cc044418d8182c61a8ef85
+Content-Type: application/json

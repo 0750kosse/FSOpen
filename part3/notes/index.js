@@ -12,47 +12,68 @@ app.get("/", (req, res) => {
 
 app.get("/api/notes", (req, res) => {
   Note.find({}).then((notes) => {
-    console.log(notes);
     res.json(notes);
   });
 });
 
 app.get("/api/notes/:id", (req, res) => {
-  //Saves id param & converts to number
-  const id = Number(req.params.id);
-  // finds the note with id equal to params.id
-  const note = notes.find((note) => note.id === id);
-  //if exists, returns note or not found
-  note ? res.json(note) : res.status(404).end();
-  // ******    check notes : re return to avoid saving malformated data???
+  //Grabs id
+  const id = req.params.id;
+  // finds the note with id === to params.id
+  Note.findById(id)
+    .then((notes) => {
+      //if note exists, returns note or return not found
+      notes ? res.json(notes) : res.status(404).end();
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).send({ error: "malformated id" });
+    });
 });
 
 app.post("/api/notes", (req, res) => {
-  const note = req.body;
+  const body = req.body;
   //check if no note || no note content, then returns 404 & error message
-  if (!note || !note.content) {
+  if (!body || !body.content) {
     res.status(404).json({ error: "note content is missing" });
   }
-  //ids const finds array of id, maxId finds max id
-  const ids = notes.map((note) => note.id);
-  const maxId = Math.max(...ids);
-
-  const newNote = {
-    id: maxId + 1,
-    content: note.content,
+  //creates new note
+  const noteToSave = new Note({
+    content: body.content,
     date: new Date().toISOString(),
-    important: typeof note.important !== "undefined" ? note.important : false,
+    important: typeof body.important !== "undefined" ? body.important : false,
+  });
+  //saving new note
+  noteToSave.save().then((savedNote) => {
+    res.json(savedNote);
+  });
+});
+
+app.put("/api/notes/:id", (req, res) => {
+  const body = req.body;
+  const id = req.params.id;
+  //contents of the updated note
+  const note = {
+    content: body.content,
+    important: body.important,
   };
-  notes = [...notes, newNote];
-  res.status(201).json(newNote);
+  //findby... receives id, updated note contents, & new so this returns the updated note
+  Note.findByIdAndUpdate(id, note, { new: true })
+    //send back updatedNote
+    .then((updatedNote) => {
+      res.json(updatedNote);
+    })
+    .catch((err) => console.log(err.message));
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-  //Saves id param & converts to number
-  const id = Number(req.params.id);
-  //returns new array filtering out the selected note
-  const note = notes.filter((note) => note.id !== id);
-  res.status(204).end();
+  const id = req.params.id;
+  Note.findByIdAndRemove(id)
+    //send back deletedNote
+    .then((deletedNote) => {
+      res.json(deletedNote).status(204).end();
+    })
+    .catch((error) => console.log(error.message));
 });
 
 const unknownEndPoint = (req, res) => {
