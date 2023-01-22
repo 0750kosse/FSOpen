@@ -1,1 +1,7 @@
 DELETE  http://localhost:3001/api/persons/10
+
+### 
+DELETE  http://localhost:3001/api/persons/63cce518cf0c39ecf289b41a
+
+### 
+DELETE  http://localhost:3001/api/persons/61cce84339abe96641e8e4bb

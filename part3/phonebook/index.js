@@ -1,7 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+const { Schema, model } = mongoose;
+const url = process.env.MONGODB_URI;
 
 app.use(express.json());
 app.use(cors());
@@ -19,78 +24,86 @@ app.use(
   )
 );
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
+mongoose.connect(url);
+
+const phonebookSchema = new Schema({
+  name: String,
+  number: String,
+});
+
+const Contact = model("Contact", phonebookSchema);
+
+phonebookSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
   },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+});
 
 app.get("/info", (req, res) => {
   const timeOfRequest = new Date().toUTCString();
-  res.send(`
-  <h3>Phonebook has info for ${persons.length} people</h3>
-  <p>${timeOfRequest}</p>
- `);
+  Contact.find({}).then((allContacts) => {
+    res.send(` 
+    <h3>Phonebook has info for ${allContacts.length} people</h3>
+    <p>${timeOfRequest}</p>
+    `);
+  });
 });
 
 app.get("/api/persons", (req, res) => {
-  res.send(persons);
+  Contact.find({}).then((allContacts) => {
+    allContacts.length > 0
+      ? res.json(allContacts)
+      : res.send("no contacts found");
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (!person) {
-    res.status(404);
-  }
-  res.json(person);
+  const id = req.params.id;
+  Contact.findById(id)
+    .then((contacts) => {
+      contacts ? res.json(contacts) : res.status(404).end();
+    })
+    .catch((err) => {
+      res.status(404).send({ error: "malformated id" });
+    });
 });
 
-app.post("/api/persons", (req, res) => {
-  const person = req.body;
-  const randomId = Math.round(Math.random() * (1000 - 5) + 5);
+app.post("/api/persons", async (req, res) => {
+  const body = req.body;
+  //creates newContact with 'body' data
+  const newContact = new Contact({
+    name: body.name,
+    number: body.number,
+  });
+  //Finds all contacts from db & checks if newContact.name exists
+  const existingContacts = await Contact.find({});
+  const contactExists = existingContacts.some(
+    (person) => person.name === newContact.name
+  );
 
-  const newPerson = {
-    id: randomId,
-    name: person.name,
-    number: person.number,
-  };
-
-  const personExists = persons.some((person) => person.name === newPerson.name);
-
-  if (!person.name || !person.number) {
+  if (!body.name || !body.number) {
     res.status(400).json({ error: "name and number fields compulsory" });
-  } else if (personExists) {
+  } else if (contactExists) {
     res.status(400).json({ error: "name must be unique" });
+  } else {
+    //try-catch block not strictly necessary, but good practice for handling errors
+    try {
+      const savedContact = await newContact.save();
+      res.status(201).json(savedContact);
+    } catch (err) {
+      res.status(500).json(err.message);
+    }
   }
-
-  persons = [...persons, newPerson];
-  res.status(201).json(newPerson);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.filter((person) => person.id === id);
-  if (person.length === 0) {
-    res.status(404).json({ error: "id not found" });
-  } else res.status(204).end();
+  Contact.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((err) => console.log(err));
 });
 
 const unknownEndPoint = (req, res) => {
@@ -99,7 +112,7 @@ const unknownEndPoint = (req, res) => {
 
 app.use(unknownEndPoint);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

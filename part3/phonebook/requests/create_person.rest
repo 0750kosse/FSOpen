@@ -2,7 +2,7 @@ POST  http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-"name":"Arto Hellas", "number": "12345"
+"name":"Albert Einstein", "number": "1234-7654"
 }
 
 ###
@@ -11,7 +11,7 @@ POST  http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-"name":"Jon", "number": "00000"
+"name":"Mike Smith", "number": "242-45"
 }
 
 ###
@@ -30,4 +30,10 @@ Content-Type: application/json
 {
 "name":"Greta"
 }
+
+###
+POST http://localhost:3001/api/persons/ 
+Content-Type: application/json
+
+
 
