@@ -78,12 +78,30 @@ app.post("/api/persons", async (req, res) => {
   }
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  Contact.findByIdAndDelete(req.params.id)
+app.put("/api/persons/:id", (req, res) => {
+  const body = req.body;
+  const id = req.params.id;
+
+  const updatedContact = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Contact.findByIdAndUpdate(id, updatedContact, { new: true })
     .then((result) => {
-      res.status(204).end();
+      res.status(200).json(result);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(404).send(err.message));
+});
+
+app.delete("/api/persons/:id", (req, res) => {
+  try {
+    Contact.findByIdAndDelete(req.params.id).then((result) => {
+      res.status(204).end();
+    });
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 });
 
 const unknownEndPoint = (req, res) => {
