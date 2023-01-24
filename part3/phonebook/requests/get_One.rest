@@ -5,3 +5,9 @@ GET http://localhost:3001/api/persons/63ccdeba439758de76b60677
 GET http://localhost:3001/api/persons/63cc1z6ed271f71ca72f6c63
 
 <!-- Malformated id-->
+
+###
+
+GET http://localhost:8080/api/persons/someInvalid
+
+<!-- Malformated id-->

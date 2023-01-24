@@ -4,7 +4,9 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const Contact = require("./models/contact");
-
+// order of middleware IS IMPORTANT
+const errorHandler = require("./middleware/errorHandler");
+const unknownEndPoint = require("./middleware/unknownEndoint");
 app.use(express.json());
 app.use(cors());
 //logging data for exercise, but beware of data privacy GDPR!!!
@@ -31,26 +33,26 @@ app.get("/info", (req, res) => {
   });
 });
 
-app.get("/api/persons", (req, res) => {
-  Contact.find({}).then((allContacts) => {
-    allContacts.length > 0
-      ? res.json(allContacts)
-      : res.send("no contacts found");
-  });
+app.get("/api/persons", (req, res, next) => {
+  Contact.find({})
+    .then((allContacts) => {
+      allContacts.length > 0
+        ? res.json(allContacts)
+        : res.status(404).send("no contacts found");
+    })
+    .catch((err) => next(err));
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   Contact.findById(id)
     .then((contacts) => {
       contacts ? res.json(contacts) : res.status(404).end();
     })
-    .catch((err) => {
-      res.status(404).send({ error: "malformated id" });
-    });
+    .catch((err) => next(err));
 });
 
-app.post("/api/persons", async (req, res) => {
+app.post("/api/persons", async (req, res, next) => {
   const body = req.body;
   //creates newContact with 'body' data
   const newContact = new Contact({
@@ -73,12 +75,12 @@ app.post("/api/persons", async (req, res) => {
       const savedContact = await newContact.save();
       res.status(201).json(savedContact);
     } catch (err) {
-      res.status(500).json(err.message);
+      next(err);
     }
   }
 });
 
-app.put("/api/persons/:id", (req, res) => {
+app.put("/api/persons/:id", (req, res, next) => {
   const body = req.body;
   const id = req.params.id;
 
@@ -91,26 +93,22 @@ app.put("/api/persons/:id", (req, res) => {
     .then((result) => {
       res.status(200).json(result);
     })
-    .catch((err) => res.status(404).send(err.message));
+    .catch((err) => next(err));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  try {
-    Contact.findByIdAndDelete(req.params.id).then((result) => {
-      res.status(204).end();
-    });
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
+app.delete("/api/persons/:id", (req, res, next) => {
+  Contact.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).json(result).end();
+    })
+    .catch((err) => next(err));
 });
-
-const unknownEndPoint = (req, res) => {
-  res.status(404).send({ error: " unknown endpoint" });
-};
 
 app.use(unknownEndPoint);
+//error handler middleware has to always be the LAST loaded middleware
+app.use(errorHandler);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
