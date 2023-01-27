@@ -6,7 +6,11 @@ const url = process.env.MONGODB_URI;
 mongoose.connect(url);
 
 const phonebookSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
   number: String,
 });
 

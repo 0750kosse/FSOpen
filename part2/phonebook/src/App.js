@@ -48,6 +48,44 @@ const App = () => {
     }, 5000);
   };
 
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    const newEntry = {
+      name: newName,
+      number: phoneNumber,
+    };
+    //checks if newEntry lenght is valid
+    if (!validateFormData(newEntry)) {
+      return;
+    }
+    //if contact exists, updates contact, else new contact
+    if (isContactRepeated(newEntry)) {
+      handleUpdateContact();
+    } else {
+      handleCreateContact(newEntry);
+    }
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
+
+    e.target.reset();
+  };
+  //Checks if contact is repeated
+  const isContactRepeated = (newEntry) => {
+    return persons.some((person) => person.name === newName);
+  };
+  //Validates newEntry to ensure newEntry lenght is > 3 or returns error
+  const validateFormData = (newEntry) => {
+    let isValid = true;
+    if (newEntry.name.length < 3) {
+      isValid = false;
+      setErrorMessage("Name must be at least 3 chars long");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+    return isValid;
+  };
   const handleUpdateContact = (id) => {
     // contact finds the person whose details will be updated & updatedContact returns the contact's updated contact details
     const contact = persons.find((person) => person.name === newName);
@@ -78,28 +116,19 @@ const App = () => {
       });
   };
 
-  const handleSubmitForm = (e) => {
-    e.preventDefault();
-    const newEntry = {
-      name: newName,
-      number: phoneNumber,
-    };
-
-    const isRepeated = persons.some((person) => person.name === newName);
-
-    isRepeated
-      ? handleUpdateContact()
-      : contactService.createContact(newEntry).then((newContact) => {
-          // setPersons([...persons, newContact]);
-          // 95: ensures we use the state last value
-          setPersons((persons) => [...persons, newContact]);
-          setSuccessMessage(`Added ${newContact.name}`);
-        });
-    setTimeout(() => {
-      setSuccessMessage(null);
-    }, 5000);
-
-    e.target.reset();
+  const handleCreateContact = (newEntry) => {
+    contactService
+      .createContact(newEntry)
+      .then((newContact) => {
+        // setPersons([...persons, newContact]);
+        // 126: ensures we use the state last value
+        setPersons((persons) => [...persons, newContact]);
+        setSuccessMessage(`Added ${newContact.name}`);
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+        setErrorMessage(err.response.data.error);
+      });
   };
 
   const filteredNames = persons.filter((person) => {
