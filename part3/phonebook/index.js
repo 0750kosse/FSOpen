@@ -4,9 +4,9 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const Contact = require("./models/contact");
-// order of middleware IS IMPORTANT
 const errorHandler = require("./middleware/errorHandler");
 const unknownEndPoint = require("./middleware/unknownEndoint");
+// order of middleware IS IMPORTANT
 app.use(express.json());
 app.use(cors());
 //logging data for exercise, but beware of data privacy GDPR!!!
@@ -26,7 +26,7 @@ app.use(
 app.get("/info", (req, res) => {
   const timeOfRequest = new Date().toUTCString();
   Contact.find({}).then((allContacts) => {
-    res.send(` 
+    res.send(`
     <h3>Phonebook has info for ${allContacts.length} people</h3>
     <p>${timeOfRequest}</p>
     `);
@@ -36,9 +36,12 @@ app.get("/info", (req, res) => {
 app.get("/api/persons", (req, res, next) => {
   Contact.find({})
     .then((allContacts) => {
-      allContacts.length > 0
-        ? res.json(allContacts)
-        : res.status(404).send("no contacts found");
+      if (Array.isArray(allContacts) && allContacts.length > 1) {
+        res.status(200).send(allContacts);
+      } else {
+        console.log(res);
+        res.status(404).send({ contacts: "no data yet" });
+      }
     })
     .catch((err) => next(err));
 });
@@ -53,31 +56,25 @@ app.get("/api/persons/:id", (req, res, next) => {
 });
 
 app.post("/api/persons", async (req, res, next) => {
-  const body = req.body;
-  //creates newContact with 'body' data
-  const newContact = new Contact({
-    name: body.name,
-    number: body.number,
-  });
+  const phonebook = new Contact(req.body);
   //Finds all contacts from db & checks if newContact.name exists
   const existingContacts = await Contact.find({});
   const contactExists = existingContacts.some(
-    (person) => person.name === newContact.name
+    (person) => person.name === phonebook.name
   );
 
-  if (!body.name || !body.number) {
-    res.status(400).json({ error: "name and number fields compulsory" });
-  } else if (contactExists) {
-    res.status(400).json({ error: "name must be unique" });
-  } else {
-    //try-catch block not strictly necessary, but good practice for handling errors
+  const err = phonebook.validateSync();
+
+  //try-catch block not strictly necessary, but good practice for handling errors
+  if (!contactExists) {
     try {
-      const savedContact = await newContact.save();
-      res.status(201).json(savedContact);
+      const savedContact = await phonebook.save();
+      res.status(201).send(savedContact);
     } catch (err) {
       next(err);
     }
   }
+  next(err);
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -89,11 +86,17 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: body.number,
   };
 
-  Contact.findByIdAndUpdate(id, updatedContact, { new: true })
+  Contact.findByIdAndUpdate(id, updatedContact, {
+    runValidators: true,
+    new: true,
+  })
     .then((result) => {
       res.status(200).json(result);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {

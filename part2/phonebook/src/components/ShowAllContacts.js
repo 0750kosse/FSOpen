@@ -1,7 +1,10 @@
 import { Person } from "./Person";
 
-export const ShowAllContacts = ({ persons, onClick, title }) => {
-  return persons.map((person) => {
+export const ShowAllContacts = ({ contacts, onClick, title }) => {
+  //Checks contacts is array & not empty
+  if (!Array.isArray(contacts) || !contacts.length)
+    return <h1>No contacts mate</h1>;
+  return contacts.map((person) => {
     return (
       <Person
         key={person.id}
