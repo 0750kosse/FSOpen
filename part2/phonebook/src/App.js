@@ -1,3 +1,4 @@
+import "./App.css";
 import { useState, useEffect } from "react";
 import contactService from "./services/contacts";
 import { Filter } from "./components/Filter";
