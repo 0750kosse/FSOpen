@@ -2,9 +2,20 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const Note = require("./models/note");
+const errorHandler = require("./middleware/errorHandler");
+const unknownEndPoint = require("./middleware/unknownEndPoint")
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
 
 app.use(express.json());
 app.use(cors());
+app.use(requestLogger)
 
 app.get("/", (req, res) => {
   res.send("<h1>Express Application, add /api/notes to see the notes</h1>");
@@ -16,7 +27,7 @@ app.get("/api/notes", (req, res) => {
   });
 });
 
-app.get("/api/notes/:id", (req, res) => {
+app.get("/api/notes/:id", (req, res,next) => {
   //Grabs id
   const id = req.params.id;
   // finds the note with id === to params.id
@@ -25,10 +36,8 @@ app.get("/api/notes/:id", (req, res) => {
       //if note exists, returns note or return not found
       notes ? res.json(notes) : res.status(404).end();
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(400).send({ error: "malformated id" });
-    });
+    .catch((error) => { next(error)
+      });
 });
 
 app.post("/api/notes", (req, res) => {
@@ -61,26 +70,23 @@ app.put("/api/notes/:id", (req, res) => {
   Note.findByIdAndUpdate(id, note, { new: true })
     //send back updatedNote
     .then((updatedNote) => {
-      res.json(updatedNote);
+     res.status(200).json({updatedNote}) 
     })
     .catch((err) => console.log(err.message));
 });
 
-app.delete("/api/notes/:id", (req, res) => {
+app.delete("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
   Note.findByIdAndRemove(id)
     //send back deletedNote
     .then((deletedNote) => {
       res.json(deletedNote).status(204).end();
     })
-    .catch((error) => console.log(error.message));
+    .catch((error) =>next);
 });
 
-const unknownEndPoint = (req, res) => {
-  res.status(404).send({ error: " unknown endpoint" });
-};
-
 app.use(unknownEndPoint);
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
