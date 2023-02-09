@@ -7,7 +7,7 @@ import { Notification } from "./components/Notification";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("a new note");
+  const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -23,13 +23,17 @@ const App = () => {
       content: newNote,
       date: new Date().toISOString(),
       important: Math.random() < 0.5,
-      id: notes.length + 1,
     };
-
-    notesServices.create(noteObject).then((createdNote) => {
-      setNotes([...notes, createdNote]);
-      setNewNote("");
-    });
+    notesServices
+      .create(noteObject)
+      .then((createdNote) => {
+        setNotes([...notes, createdNote]);
+        setNewNote("");
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+        setErrorMessage(err.response.data.error);
+      });
   };
 
   const handleNoteChange = (e) => {
@@ -40,18 +44,33 @@ const App = () => {
     ? notes
     : notes.filter((note) => note.important === true);
 
-  const toggleImportanceOf = (id) => {
+  const toggleImportance = (id) => {
+    //find note we want to modify
     const note = notes.find((note) => note.id === id);
-    const changedNote = { ...note, important: !note.important };
-
+    //create a new object, with same props as original, apart from the prop we want to update
+    const updatedNote = { ...note, important: !note.important };
     notesServices
-      .update(id, changedNote)
-      .then((changedNote) =>
-        setNotes(notes.map((note) => (note.id !== id ? note : changedNote)))
-      )
+      .update(id, updatedNote)
+      .then((result) => {
+        setNotes(notes.map((note) => (note.id !== id ? note : result)));
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+        setErrorMessage(err.response.data.error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
+  };
+
+  const handleDeleteNote = (id) => {
+    const note = notes.find((note) => note.id === id);
+    notesServices
+      .deleteNote(id)
+      .then((notes) => setNotes(notes.filter((note) => note.id !== id)))
       //catches error & display temporary error message, then timeout sets error to null again
       .catch((e) => {
-        setErrorMessage(`Note ${note.content} was already deleted from server`);
+        setErrorMessage(`Note '${note.content}' was already deleted from server`);
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
@@ -66,14 +85,15 @@ const App = () => {
       {/* Notification will only show if trying to change deleted note */}
       <Notification message={errorMessage} />
       <button onClick={() => setShowAll(!showAll)}>
-        show{showAll ? " important" : " all"}
+        show{showAll ? " not important" : " all"}
       </button>
       <ul>
         {notesToShow.map((note) => (
           <Note
             key={note.id}
             note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
+            updateNote={() => toggleImportance(note.id)}
+            deleteNote={() => handleDeleteNote(note.id)}
           />
         ))}
       </ul>
