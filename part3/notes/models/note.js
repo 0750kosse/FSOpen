@@ -14,7 +14,11 @@ mongoose
   .catch((err) => console.log("error connecting to db", err.message));
 
 const noteSchema = new Schema({
-  content: String,
+  content: {
+    type: String,
+    minLength : [5, "Min content note is 5"],
+    required: true
+  },
   date: Date,
   important: Boolean,
 });

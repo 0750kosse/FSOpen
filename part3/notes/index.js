@@ -6,10 +6,10 @@ const errorHandler = require("./middleware/errorHandler");
 const unknownEndPoint = require("./middleware/unknownEndPoint")
 
 const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
+  // console.log('Method:', request.method)
+  // //console.log('Path:  ', request.path)
+  // console.log('Body:  ', request.body)
+  // console.log('---')
   next()
 }
 
@@ -34,17 +34,18 @@ app.get("/api/notes/:id", (req, res,next) => {
   Note.findById(id)
     .then((notes) => {
       //if note exists, returns note or return not found
-      notes ? res.json(notes) : res.status(404).end();
+      notes ? res.json(notes) : res.status(404).send({error:"Note ID not found"}).end();
     })
-    .catch((error) => { next(error)
+    .catch((error) => { 
+     next(error)
       });
 });
 
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", (req, res,next) => {
   const body = req.body;
   //check if no note || no note content, then returns 404 & error message
-  if (!body || !body.content) {
-    res.status(404).json({ error: "note content is missing" });
+  if (!body || !body.content ||body.content.length === 0) {
+    res.status(404).json({ error: "note content is missing" })
   }
   //creates new note
   const noteToSave = new Note({
@@ -52,27 +53,36 @@ app.post("/api/notes", (req, res) => {
     date: new Date().toISOString(),
     important: typeof body.important !== "undefined" ? body.important : false,
   });
+
+  console.log("noteTo save....",noteToSave.content.length)
   //saving new note
   noteToSave.save().then((savedNote) => {
+ 
+ 
     res.json(savedNote);
-  });
+  })
+  .catch((error)=> next(error))
 });
 
-app.put("/api/notes/:id", (req, res) => {
+app.put("/api/notes/:id", (req, res,next) => {
   const body = req.body;
   const id = req.params.id;
+  console.log("bdy>>>",body)
   //contents of the updated note
   const note = {
     content: body.content,
     important: body.important,
   };
+
+  console.log("note>>>>>", note)
   //findby... receives id, updated note contents, & new so this returns the updated note
-  Note.findByIdAndUpdate(id, note, { new: true })
+  Note.findByIdAndUpdate(id, note, { new: true, runValidators:true })
+
     //send back updatedNote
     .then((updatedNote) => {
      res.status(200).json({updatedNote}) 
     })
-    .catch((err) => console.log(err.message));
+    .catch((error) => next(error));
 });
 
 app.delete("/api/notes/:id", (req, res, next) => {
@@ -80,9 +90,10 @@ app.delete("/api/notes/:id", (req, res, next) => {
   Note.findByIdAndRemove(id)
     //send back deletedNote
     .then((deletedNote) => {
+      console.log("deleted>>>", deletedNote)
       res.json(deletedNote).status(204).end();
     })
-    .catch((error) =>next);
+    .catch((error) =>next(error));
 });
 
 app.use(unknownEndPoint);

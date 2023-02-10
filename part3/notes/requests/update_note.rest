@@ -1,4 +1,4 @@
-PUT http://localhost:3001/api/notes/63cc044418d8182c61a8ef85
+PUT http://localhost:8080/api/notes/63e60ccd6ce64ab4a5b6360b
 Content-Type: application/json
 
 {
@@ -8,5 +8,11 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:3001/api/notes/61cc044418d8182c61a8ef85
+PUT http://localhost:8080/api/notes/63e60ccd6ce64ab4a5b6360b
 Content-Type: application/json
+
+{
+
+}
+
+<!-- sending put with no content == validation errror>
