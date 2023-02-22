@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "standard && node index.js && lint",
+    "dev": "standard && nodemon index.js && lint",
+    "start": "node index.js && lint",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard --fix"
   },
