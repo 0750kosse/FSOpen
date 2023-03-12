@@ -1,0 +1,9 @@
+PUT http://localhost:8080/api/blogs/63fefc58928d0629845ac2ec
+Content-Type: application/json
+
+{
+  "title": "HTML lesson one",
+  "author": "myself"
+}
+
+###

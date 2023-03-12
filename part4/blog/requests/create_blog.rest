@@ -1,10 +1,10 @@
-POST http://localhost:3003/api/blogs/
+POST http://localhost:8080/api/blogs/
 Content-Type: application/json
 
 {
-  "title":"CSS will follow",
-  "author": "Willy fogg",
-  "url":"CSS.com",
+  "title":"JS mastery",
+  "author": "Willy",
+  "url":"JS.com",
   "likes": 10
 }
 
