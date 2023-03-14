@@ -1,34 +1,6 @@
-const dummy = require('../list_helper').dummy
-const totalLikes = require('../list_helper').totalLikes
-const favBlog = require('../list_helper').favBlog
-const mostBlogs = require('../list_helper').mostBlogs
-
-// const blogs = [
-//   {
-//     _id: '5a422ba71b54a676234d17fb',
-//     title: 'TDD harms architecture',
-//     author: 'Robert C. Martin',
-//     url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
-//     likes: 30,
-//     __v: 0
-//   },
-//   {
-//     _id: '5a422bc61b54a676234d17fc',
-//     title: 'Type wars',
-//     author: 'Robert C. Martin',
-//     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-//     likes: 2,
-//     __v: 0
-//   },
-//   {
-//     _id: '5a422bc61b54a676234d17fc',
-//     title: 'Type wars',
-//     author: 'Robert C. Martin',
-//     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-//     likes: 10,
-//     __v: 0
-//   }
-// ]
+const dummy = require('../utils/list_helper').dummy
+const totalLikes = require('../utils/list_helper').totalLikes
+const favBlog = require('../utils/list_helper').favBlog
 
 const blogs = [
   {
@@ -97,14 +69,5 @@ describe('blogs', () => {
     const expected = blogs.sort((a, b) => b.likes - a.likes)
     const result = favBlog(blogs)
     expect(result).toEqual(expected[0])
-  })
-
-  test('returns author and number of blogs created', () => {
-    const expected = {
-      author: 'Robert C. Martin',
-      blogs: 3
-    }
-    const result = mostBlogs(blogs)
-    expect(result).toEqual(expected)
   })
 })
