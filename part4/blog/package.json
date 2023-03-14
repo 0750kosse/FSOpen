@@ -7,16 +7,27 @@
     "dev": "standard && nodemon index.js && lint",
     "start": "node index.js && lint",
     "lint": "standard --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose --watchAll"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jest": "^29.5.0",
     "nodemon": "^2.0.20",
     "standard": "^17.0.0"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "mongoose": "^6.10.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "standard": {
+    "globals": [
+      "test",
+      "expect",
+      "describe"
+    ]
   }
 }
