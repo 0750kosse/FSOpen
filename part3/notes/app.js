@@ -12,7 +12,8 @@ mongoose.set('strictQuery', false)
 logger.info('connecting to ', config.MONGODB_URI)
 
 mongoose
-  .connect(config.MONGODB_URI)
+// connect to test or production DB
+  .connect(config.NODE_ENV === 'test' ? config.MONGODB_URI_TEST : config.MONGODB_URI)
   .then(() => {
     logger.info('db connected')
   })

@@ -2,10 +2,6 @@ const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
 notesRouter.get('/', (req, res) => {
-  res.send('<h1>Express Application, add /api/notes to see the notes</h1>')
-})
-
-notesRouter.get('/', (req, res) => {
   Note.find({}).then((notes) => {
     res.json(notes)
   })
