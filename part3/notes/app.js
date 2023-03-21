@@ -9,8 +9,6 @@ const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 
-logger.info('connecting to ', config.MONGODB_URI)
-
 mongoose
 // connect to test or production DB
   .connect(config.NODE_ENV === 'test' ? config.MONGODB_URI_TEST : config.MONGODB_URI)

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development standard && nodemon index.js && lint",
     "start": "NODE_ENV=production node index.js && lint",
-    "test": "NODE_ENV=test jest  --verbose --watchAll -runInBand  ",
+    "test": "NODE_ENV=test jest  --verbose --watchAll -runInBand",
     "lint": "standard --fix"
   },
   "author": "",
@@ -31,7 +31,8 @@
       "test",
       "expect",
       "describe",
-      "afterAll"
+      "afterAll",
+      "beforeEach"
     ]
   }
 }
