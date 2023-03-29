@@ -1,17 +1,15 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
-blogsRouter.get('/', (request, response, next) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      blogs.length > 0
-        ? response.status(200).json(blogs)
-        : response.json({ error: 'no blogs yet' })
-    })
-    .catch((error) => {
-      next(error)
-    })
+blogsRouter.get('/', async (request, response, next) => {
+  const blogs = await Blog.find({})
+  try {
+    if (blogs.length > 0) {
+      response.status(200).json(blogs)
+    } else {
+      response.json({ error: 'no blogs yet' })
+    }
+  } catch (error) { next(error) }
 })
 
 blogsRouter.get('/:id', (request, response, next) => {
@@ -26,18 +24,18 @@ blogsRouter.get('/:id', (request, response, next) => {
     })
 })
 
-blogsRouter.post('/', (request, response, next) => {
-  const blog = new Blog(request.body)
-  blog
-    .save()
-    .then(result => {
-      result
-        ? response.status(201).json(result)
-        : response.status(400).json({ error: 'malgormed data' })
-    })
-    .catch((error) => {
-      next(error)
-    })
+blogsRouter.post('/', async (request, response, next) => {
+  const blog = await new Blog(request.body)
+  if (!blog.likes) blog.likes = 0
+
+  try {
+    if (!blog.title || !blog.url) {
+      response.status(400).json()
+    } else if (blog) {
+      blog.save()
+      response.status(201).json()
+    }
+  } catch (error) { next(error) }
 })
 
 blogsRouter.put('/:id', (request, response, next) => {

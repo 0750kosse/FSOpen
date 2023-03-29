@@ -1,4 +1,6 @@
-const {dummy, totalLikes, favBlog} = require('./list_helper')
+const app = require('../app')
+const supertest = require('supertest')
+const api = supertest(app)
 
 const blogs = [
   {
@@ -50,26 +52,28 @@ const blogs = [
     __v: 0
   }
 ]
+const dummy = (blogs) => {
+  return 1
+}
 
-describe('blogs', () => {
-  test('dummy returns one', () => {
-    const blogs = []
-    const result = dummy(blogs)
-    expect(result).toBe(1)
+const totalLikes = (blogs) => {
+  let sum = 0
+  blogs.map((blog) => {
+    sum += blog.likes
+    return sum
   })
+  return sum
+}
 
-  test('returns the sum of likes', () => {
-    const result = totalLikes(blogs)
-    expect(result).toBe(3049)
-  })
+const favBlog = (blogs) => {
+  const mostVoted = blogs.sort((a, b) => b.likes - a.likes)
+  return mostVoted[0]
+}
 
-  test('returns the favourite blog', () => {
-    const expected = blogs.sort((a, b) => b.likes - a.likes)
-    const result = favBlog(blogs)
-    expect(result).toEqual(expected[0])
-  })
-})
+const blogsInDb = async () => {
+  const response = await api.get('/api/blogs')
+  const contents = response.body.map(blog => blog)
+  return { response, contents }
+}
 
-
-
-
+module.exports = { dummy, totalLikes, favBlog, blogsInDb, blogs }

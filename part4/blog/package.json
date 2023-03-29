@@ -4,17 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "standard && nodemon index.js && lint",
-    "start": "node index.js && lint",
+    "dev": "NODE_ENV=development standard && nodemon index.js && lint",
+    "start": "NODE_ENV=production node index.js && lint",
     "lint": "standard --fix",
-    "test": "jest --verbose --watchAll"
+    "test": "NODE_ENV=test jest --verbose --watchAll --runInBand --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "jest": "^29.5.0",
     "nodemon": "^2.0.20",
-    "standard": "^17.0.0"
+    "standard": "^17.0.0",
+    "supertest": "^6.3.3"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -27,7 +28,9 @@
     "globals": [
       "test",
       "expect",
-      "describe"
+      "describe",
+      "beforeEach",
+      "afterAll"
     ]
   }
 }
