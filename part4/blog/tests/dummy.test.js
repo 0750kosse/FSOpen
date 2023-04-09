@@ -1,4 +1,4 @@
-const {dummy, totalLikes, favBlog} = require('./list_helper')
+const { dummy, totalLikes, favBlog } = require('./list_helper')
 
 const blogs = [
   {
@@ -69,7 +69,3 @@ describe('blogs', () => {
     expect(result).toEqual(expected[0])
   })
 })
-
-
-
-

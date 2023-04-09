@@ -27,7 +27,20 @@ describe('GET tests', () => {
 
   test('ensures that unique identifier is id, not _id', async () => {
     const { contents } = await blogsInDb()
+
     expect(contents[0].id).toBeDefined()
+  })
+})
+
+describe('GET by id', () => {
+  test('gets blog by id', async () => {
+    const { contents } = await blogsInDb()
+
+    await api
+      .get(`/api/blogs/${contents[0].id}`)
+      .expect(200)
+
+    expect(contents[0].title).toContain('React patterns')
   })
 })
 
@@ -79,6 +92,43 @@ describe('POST tests', () => {
       .post('/api/blogs')
       .send(missingPropsBlog)
       .expect(400)
+  })
+})
+
+describe('PUT tests', () => {
+  test('updates blog', async () => {
+    const { response } = await blogsInDb()
+    const blogToUpdate = response.body[0]
+
+    const updatedBlog = {
+      title: 'React patterns UPDATED',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 400,
+      id: '5a422a851b54a676234d17f7'
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+
+    const blogListUpdated = await blogsInDb()
+    expect(blogListUpdated.response.body[0].title).toContain(updatedBlog.title)
+  })
+})
+
+describe('DELETES test', () => {
+  test('deletes a blog', async () => {
+    const { response } = await blogsInDb()
+    const noteToDelete = response.body[0]
+
+    await api
+      .delete(`/api/blogs/${noteToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await blogsInDb()
+    expect(blogsAtEnd.response.body).toHaveLength(response.body.length - 1)
   })
 })
 
