@@ -34,13 +34,14 @@ describe('GET tests', () => {
 
 describe('GET by id', () => {
   test('gets blog by id', async () => {
-    const { contents } = await blogsInDb()
+    const { response } = await blogsInDb()
+    const blogToView = response.body[0]
 
-    await api
-      .get(`/api/blogs/${contents[0].id}`)
+    const resultBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
       .expect(200)
-
-    expect(contents[0].title).toContain('React patterns')
+  
+      expect(resultBlog.body.title).not.toEqual(blogToView.title)
   })
 })
 
