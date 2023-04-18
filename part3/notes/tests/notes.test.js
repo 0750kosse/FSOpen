@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-
 const Note = require('../models/note')
 const { notesInDb } = require('./helpers')
 const initialNotes = require('./helpers').initialNotes
@@ -11,8 +10,8 @@ beforeEach(async () => {
   // Parallel -- (might not respect saving order)
   const noteObjects = initialNotes.map(note => new Note(note))
   const promiseArray = noteObjects.map(note => note.save())
-
   await Promise.all(promiseArray)
+  
   // Sequential --  (respects saving order)
   // for (const note of initialNotes) {
   //   const noteObject = new Note(note)
@@ -56,7 +55,10 @@ describe('POST/', () => {
   test('a valid note can be added', async () => {
     const newNote = {
       content: 'Node testing with Jest',
-      important: true
+      important: true,
+      date: new Date(),
+      user: '643e843b07120aa460f5c088'
+
     }
     await api.post('/api/notes')
       .send(newNote)

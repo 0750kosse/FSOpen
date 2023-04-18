@@ -9,8 +9,15 @@ const noteSchema = new Schema({
     minLength: [5, 'Min content note is 5'],
     required: true
   },
-  date: Date,
-  important: Boolean
+  date: {
+    type: Date
+
+  },
+  important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 // format object returned by mongoose & delete the object required fields

@@ -1,15 +1,20 @@
 const app = require('../app')
 const supertest = require('supertest')
 const api = supertest(app)
+const User = require('../models/user')
 
 const initialNotes = [
   {
     content: 'HTML is easy',
-    important: false
+    important: false,
+    date: new Date().toISOString(),
+    userId: '643e843b07120aa460f5c088'
   },
   {
     content: 'Browser can execute only JavaScript',
-    important: true
+    important: true,
+    date: new Date().toISOString(),
+    userId: '643e843b07120aa460f5c088'
   }
 ]
 
@@ -19,4 +24,9 @@ const notesInDb = async () => {
   return { response, contents }
 }
 
-module.exports = { api, initialNotes, notesInDb }
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
+module.exports = { api, initialNotes, notesInDb, usersInDb }
