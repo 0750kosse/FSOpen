@@ -15,11 +15,17 @@ const unknownEndPoint = (req, res) => {
 }
 
 const errorHandler = (error, req, res, next) => {
-  logger.error(error.message)
+  logger.error('Logger', error.message)
   if (error.name === 'CastError') {
     res.status(400).send({ error: error.message })
   } if (error.name === 'ValidationError') {
     res.status(400).json({ error: error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    res.status(400).json({ error: error.message })
+  } else if (error.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      error: 'token expired'
+    })
   }
   next(error)
 }
