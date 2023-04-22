@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const Blog = require('../models/blog')
+const Blog = require('../models/Blog')
 const { blogs, blogsInDb } = require('./list_helper')
 
 beforeEach(async () => {
@@ -40,8 +40,8 @@ describe('GET by id', () => {
     const resultBlog = await api
       .get(`/api/blogs/${blogToView.id}`)
       .expect(200)
-  
-      expect(resultBlog.body.title).not.toEqual(blogToView.title)
+
+    expect(resultBlog.body.title).toEqual(blogToView.title)
   })
 })
 

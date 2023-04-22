@@ -1,14 +1,14 @@
-const logger = require('../utils/logger')
 const mongoose = require('mongoose')
-const config = require('../utils/config')
-
-mongoose.set('strictQuery', false)
 
 const blogSchema = new mongoose.Schema({
   title: String,
   author: String,
   url: String,
-  likes: Number
+  likes: Number,
+  user: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 })
 
 const Blog = mongoose.model('Blog', blogSchema)
@@ -20,12 +20,5 @@ blogSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-
-mongoose
-  .connect(config.MONGODB_URI)
-  .then(() => {
-    logger.info('DB connected')
-  })
-  .catch((err) => logger.error('error connecting to db >>', err.message))
 
 module.exports = Blog
