@@ -52,6 +52,21 @@ const blogs = [
     __v: 0
   }
 ]
+
+const users = [
+  {
+    username: 'boris',
+    name: 'Boris James',
+    passwordHash: 'welcome124'
+
+  },
+  {
+    username: 'juani',
+    name: 'juani garcia',
+    passwordHash: '124Welcome'
+
+  }
+]
 const dummy = (blogs) => {
   return 1
 }
@@ -76,4 +91,10 @@ const blogsInDb = async () => {
   return { response, contents }
 }
 
-module.exports = { dummy, totalLikes, favBlog, blogsInDb, blogs }
+const usersInDb = async () => {
+  const response = await api.get('/api/users')
+  const contents = response.body.map(u => u)
+  return { response, contents }
+}
+
+module.exports = { dummy, totalLikes, favBlog, blogsInDb, blogs, users, usersInDb }

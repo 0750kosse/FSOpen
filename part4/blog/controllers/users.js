@@ -19,9 +19,18 @@ usersRouter.post('/', async (req, res, next) => {
   })
 
   try {
-    const savedUser = await user.save()
-    res.status(201).json(savedUser)
-  } catch (e) { next(e) }
+    if (!(username && password)) {
+      res.status(400).json({ error: 'username and password are required fields' })
+    }
+    else if ((username.length && password.length) < 3) {
+      res.status(400).json({error: 'minimum username and password lenght is 3'})
+    } else {
+      const savedUser = await user.save()
+      res.status(201).json(savedUser)
+    }
+  } catch (e) {
+    next(e)
+  }
 })
 
 module.exports = usersRouter

@@ -7,6 +7,8 @@ const errorHandler = (error, req, res, next) => {
     res.status(400).send({ error: error.message })
   } if (error.name === 'ValidationError') {
     res.status(400).json({ error: error.message })
+  } if (error.name === 'ValidatorError') {
+    res.status(400).json({ error: error.message })
   }
 }
 

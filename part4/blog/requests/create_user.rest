@@ -2,10 +2,31 @@ POST http://localhost:8080/api/users/
 Content-Type: application/json
 
 {
-  "username":"Boris Yeltsin",
-  "password": "1234Welcome",
-  "name" : "Boris James"
-  
+  "username":"lolalola ",
+  "password": "sajkhj",
+  "name" : "lolita lola"
+}
+
+###
+
+POST http://localhost:8080/api/users/
+Content-Type: application/json
+
+{
+  "password": "iniesta",
+  "name" : "andres"
+}
+
+###
+
+
+POST http://localhost:8080/api/users/
+Content-Type: application/json
+
+{
+  "name" : "andres",
+  "password":"",
+  "username":""
 }
 
 ###
