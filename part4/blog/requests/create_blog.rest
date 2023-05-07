@@ -2,10 +2,36 @@ POST http://localhost:8080/api/blogs/
 Content-Type: application/json
 
 {
-  "title":"JS mastery",
-  "author": "Willy",
+  "title":"Request with no user",
+  "author": "Threepeat",
   "url":"JS.com",
-  "likes": 10
+  "likes": 5000
+ }
+
+###
+
+POST http://localhost:8080/api/blogs/
+Content-Type: application/json
+
+{
+  "title":"Blog with no likes, should add 0 likes",
+  "author": "Threepeat",
+  "url":"JS.com",
+  "user":"64578ff0352923f36ef20152" 
 }
 
 ###
+
+POST http://localhost:8080/api/blogs/
+Content-Type: application/json
+
+{
+  "author": "Threepeat",
+  "url":"JS.com",
+  "likes": 5000,
+  "user":"6454006c3ca425590b26bfac" 
+   
+}
+
+###
+

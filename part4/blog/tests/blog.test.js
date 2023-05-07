@@ -3,7 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/Blog')
-const { blogs, blogsInDb } = require('./list_helper')
+const { blogs, blogsInDb, usersInDb } = require('./list_helper')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -47,11 +47,15 @@ describe('GET by id', () => {
 
 describe('POST tests', () => {
   test('post succesfully creates new blog', async () => {
+    const blogsAtStart = await blogsInDb()
+    const { response } = await usersInDb()
+
     const newBlog = {
       title: 'Romancero Gitano',
       author: 'Lorca',
       url: 'http:/blablabla/05/01/Cervantes.html',
-      likes: 200
+      likes: 200,
+      user: response.body[0].id
     }
 
     await api
@@ -60,33 +64,40 @@ describe('POST tests', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const { response } = await blogsInDb()
-    const contents = response.body.map(blogContent => blogContent.title)
+    const blogsAtEnd = await blogsInDb()
 
-    expect(response.body).toHaveLength(blogs.length + 1)
-    expect(contents).toContain(newBlog.title)
+    expect(blogsAtEnd.response.body).toHaveLength(blogsAtStart.response.body.length + 1)
+    expect(blogsAtEnd.response.body[6].title).toContain(newBlog.title)
   })
   test('iF likes property is missing, it will default to 0', async () => {
+    const { response } = await usersInDb()
+
     const noLikesBlog = {
       title: 'la guerra de las galaxias',
       author: 'orwell',
-      url: 'http:/blablabla/05/01/orwell.html'
+      url: 'http:/blablabla/05/01/orwell.html',
+      user: response.body[0].id
     }
 
     await api
       .post('/api/blogs')
       .send(noLikesBlog)
       .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-    const { response } = await blogsInDb()
-    const addedBlog = await response.body.find(blog => blog.title === 'la guerra de las galaxias')
-    expect(addedBlog.likes).toBe(0)
+    const blogs = await blogsInDb()
+    const lastBlog = blogs.response.body[blogs.response.body.length - 1]
+
+    expect(lastBlog.likes).toBe(0)
   })
 
-  test('if no title or url props, return status 400', async () => {
+  test('if no title or url props or user, return status 400', async () => {
+    const { response } = await usersInDb()
+
     const missingPropsBlog = {
       author: 'orwell',
-      likes: 400
+      likes: 400,
+      user: response.body[0].id
     }
 
     await api

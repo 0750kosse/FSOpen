@@ -4,7 +4,7 @@ const app = require('../app')
 const api = supertest(app)
 const User = require('../models/User')
 const { users, usersInDb } = require('./list_helper')
-// const bcrypt = require('bcrypt')
+
 
 beforeEach(async () => {
   await User.deleteMany({})
@@ -68,7 +68,7 @@ describe('POST users', () => {
   })
   test('user is not created if missing username', async () => {
     const usersAtStart = await usersInDb()
-    console.log('useraStart', usersAtStart.response.body)
+
     const newUser = {
       username: '',
       name: 'Jhon Doe',
