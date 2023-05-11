@@ -3,7 +3,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 
 usersRouter.get('/', async (req, res, next) => {
-  const user = await User.find({}).populate('blogs', {title:1, author:1, url:1, likes:1})
+  const user = await User.find({}).populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
   if (user.length === 0) res.status(400).json({ error: 'no users yet' })
   else res.status(200).json(user)
 })

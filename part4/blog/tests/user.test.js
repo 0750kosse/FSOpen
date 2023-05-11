@@ -5,7 +5,6 @@ const api = supertest(app)
 const User = require('../models/User')
 const { users, usersInDb } = require('./list_helper')
 
-
 beforeEach(async () => {
   await User.deleteMany({})
   const userObject = users.map(item => new User(item))

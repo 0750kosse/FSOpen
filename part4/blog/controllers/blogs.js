@@ -2,8 +2,10 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
 const User = require('../models/User')
 
+const { userExtractor } = require('../utils/middleware')
+
 blogsRouter.get('/', async (request, response, next) => {
-  const blogs = await Blog.find({}).populate('user', {username:1, name: 1, id:1})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
   try {
     blogs.length > 0
       ? response.status(200).json(blogs)
@@ -20,9 +22,11 @@ blogsRouter.get('/:id', async (request, response, next) => {
   } catch (error) { next(error) }
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', userExtractor, async (request, response, next) => {
   const body = request.body
-  const user = await User.findById(body.user)
+  const { userId } = request
+  
+  const user = await User.findById(userId)
 
   if (!user) {
     return response.status(404).json({ error: 'user not found' })
@@ -50,7 +54,7 @@ blogsRouter.post('/', async (request, response, next) => {
   } catch (error) { next(error) }
 })
 
-blogsRouter.put('/:id', async (request, response, next) => {
+blogsRouter.put('/:id', userExtractor,async (request, response, next) => {
   const body = request.body
   const id = request.params.id
 
@@ -68,12 +72,17 @@ blogsRouter.put('/:id', async (request, response, next) => {
   } catch (error) { next(error) }
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
-  const id = request.params.id
-  const blog = await Blog.findByIdAndDelete(id)
-
+blogsRouter.delete('/:id', userExtractor, async (req, res, next) => {
   try {
-    if (blog) response.status(204).end()
+    const userid = req.userId
+    const id = req.params.id
+  
+    const blog = await Blog.findById(id)
+
+    if (blog.user.toString() === userid.toString()) {
+      await Blog.findByIdAndDelete(id)
+      res.status(204).end()
+    }
   } catch (error) { next(error) }
 })
 

@@ -12,12 +12,13 @@ Content-Type: application/json
 
 POST http://localhost:8080/api/blogs/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImluaWVzdGE4IiwiaWQiOiI2NDU4ZTcxZTc1YzQyOTI3YzZlYjkwMzQiLCJpYXQiOjE2ODM3MDA4MzcsImV4cCI6MTY4MzcwNDQzN30.AFeP_hXXMZ8TcIpRea82QwBmMSsN2YznzHXbj6Qa6_4
+
 
 {
-  "title":"Blog with no likes, should add 0 likes",
+  "title":"WEdnesday blog",
   "author": "Threepeat",
-  "url":"JS.com",
-  "user":"64578ff0352923f36ef20152" 
+  "url":"JS.com"
 }
 
 ###

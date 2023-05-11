@@ -1,8 +1,9 @@
-PUT http://localhost:8080/api/blogs/63fefc58928d0629845ac2ec
+PUT http://localhost:8080/api/blogs/645a8e43ea6777f7732885cd
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImluaWVzdGE4IiwiaWQiOiI2NDU4ZTcxZTc1YzQyOTI3YzZlYjkwMzQiLCJpYXQiOjE2ODM3MDA4MzcsImV4cCI6MTY4MzcwNDQzN30.AFeP_hXXMZ8TcIpRea82QwBmMSsN2YznzHXbj6Qa6_4
 
 {
-  "title": "HTML lesson one",
+  "title": "this is first blog now",
   "author": "myself"
 }
 
