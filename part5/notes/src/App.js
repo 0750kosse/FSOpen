@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import Note from "./components/Note";
 import notesServices from "./services/notes";
+import loginServices from "./services/login";
 import { Notification } from "./components/Notification";
 
 const App = () => {
@@ -10,6 +11,9 @@ const App = () => {
   const [newNote, setNewNote] = useState("a new note");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUSer] = useState(null);
 
   useEffect(() => {
     notesServices.getAll().then((initialNotes) => {
@@ -21,9 +25,7 @@ const App = () => {
     e.preventDefault();
     const noteObject = {
       content: newNote,
-      date: new Date().toISOString(),
       important: Math.random() < 0.5,
-      id: notes.length + 1,
     };
 
     notesServices.create(noteObject).then((createdNote) => {
@@ -60,11 +62,76 @@ const App = () => {
       });
   };
 
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        Username
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          name="username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
+      </div>
+      <div>
+        Password
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          name="password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  );
+
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input value={newNote} onChange={handleNoteChange} />
+      <button type="submit">Save</button>
+    </form>
+  );
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log("clicked");
+
+    try {
+      const user = await loginServices.login({
+        username,
+        password,
+      });
+
+      window.localStorage.setItem("logged note app user", JSON.stringify(user));
+      notesServices.setToken(user.token);
+      setUSer(user);
+      setUsername("");
+      setPassword("");
+    } catch (e) {
+      setErrorMessage("Wrong credentials");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
   return (
     <div>
       <h1>Notes</h1>
       {/* Notification will only show if trying to change deleted note */}
       <Notification message={errorMessage} />
+
+      {!user && loginForm()}
+      {user && (
+        <div>
+          <p>{user.username} is logged in</p>
+          {noteForm()}
+        </div>
+      )}
+
       <button onClick={() => setShowAll(!showAll)}>
         show{showAll ? " important" : " all"}
       </button>
@@ -77,10 +144,6 @@ const App = () => {
           />
         ))}
       </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange} />
-        <button type="submit">Save</button>
-      </form>
     </div>
   );
 };
