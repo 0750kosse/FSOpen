@@ -11,7 +11,7 @@ beforeEach(async () => {
   const noteObjects = initialNotes.map(note => new Note(note))
   const promiseArray = noteObjects.map(note => note.save())
   await Promise.all(promiseArray)
-  
+
   // Sequential --  (respects saving order)
   // for (const note of initialNotes) {
   //   const noteObject = new Note(note)
