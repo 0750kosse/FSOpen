@@ -25,7 +25,7 @@ blogsRouter.get('/:id', async (request, response, next) => {
 blogsRouter.post('/', userExtractor, async (request, response, next) => {
   const body = request.body
   const { userId } = request
-  
+
   const user = await User.findById(userId)
 
   if (!user) {
@@ -54,7 +54,7 @@ blogsRouter.post('/', userExtractor, async (request, response, next) => {
   } catch (error) { next(error) }
 })
 
-blogsRouter.put('/:id', userExtractor,async (request, response, next) => {
+blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
   const body = request.body
   const id = request.params.id
 
@@ -76,7 +76,7 @@ blogsRouter.delete('/:id', userExtractor, async (req, res, next) => {
   try {
     const userid = req.userId
     const id = req.params.id
-  
+
     const blog = await Blog.findById(id)
 
     if (blog.user.toString() === userid.toString()) {
