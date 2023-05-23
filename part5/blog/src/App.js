@@ -24,6 +24,7 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
+      window.localStorage.setItem("loggedInUser",JSON.stringify(user))
       setUser(user)
       setUsername('')
       setPassword('')
@@ -32,6 +33,12 @@ const App = () => {
       console.log("Error", e)
     }
   }
+
+const handleLogOut = (e)=> {
+  e.preventDefault()
+  window.localStorage.clear()
+  setUser(null)
+}
   
   return (
     <div>
@@ -49,6 +56,7 @@ const App = () => {
         <BlogList 
           user={user}
           blogs={blogs}
+          handleLogOut={handleLogOut}
           />
         }
       </div>
