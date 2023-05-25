@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import BlogList from './components/BlogList'
+import LoggedInContent from './screens/LoggedInContent'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -9,17 +9,30 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername]= useState("")
   const [password, setPassword]= useState("")
+  const [newBlog, setNewBlog] = useState({
+    title:'',
+    author:'',
+    url:''
+  })
+  
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
   }, [])
+  // if user in localstorage, user token passed to blogService
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem("loggedInUser")
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    console.log("loginng in with", username, password)
-
     try {
       const user = await loginService.login({
         username, password
@@ -34,16 +47,35 @@ const App = () => {
     }
   }
 
-const handleLogOut = (e)=> {
-  e.preventDefault()
-  window.localStorage.clear()
-  setUser(null)
+  const handleLogOut = (e)=> {
+    e.preventDefault()
+    window.localStorage.clear()
+    setUser(null)
+  }
+
+// Grabs inputs value, and sets this onto newBlog
+  const handleNewBlogChange = (e) => {
+    e.preventDefault()
+    const value = e.target.value
+    setNewBlog({...newBlog, [e.target.name]:value})
+  }
+
+// adds newBlog to the main blogs state
+  const addBlog = (e)=> {
+    e.preventDefault()
+    blogService.createBlog(newBlog).then((createdBlog) => {
+      setBlogs([...blogs, createdBlog])
+      setNewBlog({
+        title:'',
+        author:'',
+        url:''
+      })
+    })
 }
   
-  return (
+return (
     <div>
       <h2>blogs</h2>
-     {console.log("blogs", blogs)}
       <div>  
         {user === null ?
         <LoginForm 
@@ -53,10 +85,13 @@ const handleLogOut = (e)=> {
           password={password}
           setPassword={setPassword}
         />:
-        <BlogList 
+        <LoggedInContent 
           user={user}
           blogs={blogs}
           handleLogOut={handleLogOut}
+          newBlog={newBlog}
+          addBlog={addBlog}
+          handleNewBlogChange={handleNewBlogChange}
           />
         }
       </div>

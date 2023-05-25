@@ -1,11 +1,9 @@
 import Blog from './Blog'
 
-const BlogList = ({user,blogs, handleLogOut})=>{ 
+const BlogList = ({blogs})=>{ 
   return (
     <div>
-      <p>{user.username} is logged in</p>
-      <button type="submit" onClick={handleLogOut}>Log Out</button>
-       {blogs.map(blog =>
+      {blogs.map(blog =>
       <Blog key={blog.id} blog={blog} />
       )}
   </div>
@@ -13,3 +11,4 @@ const BlogList = ({user,blogs, handleLogOut})=>{
 }
 
 export default BlogList
+
