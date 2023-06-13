@@ -1,6 +1,8 @@
+import './App.css'
 import { useState, useEffect } from 'react'
 import LoggedInContent from './screens/LoggedInContent'
 import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -14,7 +16,20 @@ const App = () => {
     author:'',
     url:''
   })
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage]= useState(null)
   
+  const successTimeOut =()=> {
+    setTimeout(()=> {
+      setSuccessMessage(null)
+    },5000)
+  }
+
+  const errorTimeOut = () => {
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -41,9 +56,12 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setSuccessMessage("login success")
+      successTimeOut()
     }
-    catch (e) {
-      console.log("Error", e)
+    catch (error) {
+     setErrorMessage( error.response.data.error)
+      errorTimeOut()
     }
   }
 
@@ -70,12 +88,17 @@ const App = () => {
         author:'',
         url:''
       })
+      setSuccessMessage(`Added new blog`);
+      successTimeOut()
     })
 }
-  
+
 return (
+ 
     <div>
       <h2>blogs</h2>
+      <Notification message={errorMessage} error/>
+      <Notification message={successMessage} success/>
       <div>  
         {user === null ?
         <LoginForm 
