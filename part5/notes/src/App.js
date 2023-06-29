@@ -5,6 +5,7 @@ import Note from "./components/Note";
 import notesServices from "./services/notes";
 import loginServices from "./services/login";
 import { Notification } from "./components/Notification";
+import LoginForm from "./components/LoginForm";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -71,33 +72,7 @@ const App = () => {
       });
   };
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        Username
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          name="username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        Password
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          name="password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  );
-
-  const noteForm = () => (
+const noteForm = () => (
     <form onSubmit={addNote}>
       <input value={newNote} onChange={handleNoteChange} />
       <button type="submit">Save</button>
@@ -125,14 +100,24 @@ const App = () => {
       }, 5000);
     }
   };
+ 
 
   return (
+    
     <div>
       <h1>Notes</h1>
       {/* Notification will only show if trying to change deleted note */}
       <Notification message={errorMessage} />
 
-      {!user && loginForm()}
+      {user ===null && 
+      <LoginForm 
+      handleLogin={handleLogin}
+      username={username}
+      password={password}
+      handleUsernameChange={({ target }) => setUsername(target.value)}
+      handlePasswordChange={({ target }) => setPassword(target.value)}
+
+      />}
       {user && (
         <div>
           <p>{user.username} is logged in</p>
