@@ -6,6 +6,7 @@ import notesServices from "./services/notes";
 import loginServices from "./services/login";
 import { Notification } from "./components/Notification";
 import LoginForm from "./components/LoginForm";
+import LogOut from "./components/Logout";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -14,7 +15,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUSer] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     notesServices.getAll().then((initialNotes) => {
@@ -26,7 +27,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedNoteAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUSer(user);
+      setUser(user);
       notesServices.setToken(user.token);
     }
   }, []);
@@ -90,7 +91,7 @@ const noteForm = () => (
 
       window.localStorage.setItem("loggedNoteAppUser", JSON.stringify(user));
       notesServices.setToken(user.token);
-      setUSer(user);
+      setUser(user);
       setUsername("");
       setPassword("");
     } catch (e) {
@@ -100,16 +101,20 @@ const noteForm = () => (
       }, 5000);
     }
   };
- 
 
-  return (
-    
-    <div>
+const handleLogOut = (e)=> {
+  e.preventDefault()
+  console.log("logo out clicked")
+  window.localStorage.clear()
+  setUser(null)
+}
+ return (
+     <div>
       <h1>Notes</h1>
       {/* Notification will only show if trying to change deleted note */}
       <Notification message={errorMessage} />
 
-      {user ===null && 
+      {user === null && 
       <LoginForm 
       handleLogin={handleLogin}
       username={username}
@@ -121,7 +126,9 @@ const noteForm = () => (
       {user && (
         <div>
           <p>{user.username} is logged in</p>
+          <LogOut handleLogOut={handleLogOut}/>
           {noteForm()}
+        
         </div>
       )}
 

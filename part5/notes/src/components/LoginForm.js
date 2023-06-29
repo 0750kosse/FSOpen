@@ -13,7 +13,9 @@ return (
   </div>
 
   <div style={showWhenVisible}>
+ 
   <form onSubmit={handleLogin}>
+  <h2>Login</h2>
     <div>
       Username
       <input
