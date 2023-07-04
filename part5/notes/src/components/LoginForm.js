@@ -1,20 +1,7 @@
-import { useState } from "react"
-
 const LoginForm = ({handleLogin, username, password, handleUsernameChange, handlePasswordChange}) => {
-
-  const [loginVisible, setloginVisible]= useState(false)
-
-  const hideWhenVisible = {display: loginVisible ? 'none':''}
-  const showWhenVisible = {display: loginVisible ? '':'none'}
-return (
+  return (
   <>
-  <div style={hideWhenVisible}>
-  <button onClick={()=>setloginVisible(true)}>Show login</button>
-  </div>
-
-  <div style={showWhenVisible}>
- 
-  <form onSubmit={handleLogin}>
+   <form onSubmit={handleLogin}>
   <h2>Login</h2>
     <div>
       Username
@@ -38,17 +25,8 @@ return (
     </div>
     <button type="submit">Login</button>
   </form>
-
-  </div>
-  <div style={showWhenVisible}>
-  <button onClick={()=>setloginVisible(false)}>Cancel</button>
-  </div>
-  
-  
-  </>
-
-    
-  )
+</>
+)
 }
 
 export default LoginForm

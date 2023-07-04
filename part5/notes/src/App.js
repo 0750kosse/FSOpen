@@ -7,6 +7,8 @@ import loginServices from "./services/login";
 import { Notification } from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import LogOut from "./components/Logout";
+import Toggable from "./components/Toggable";
+import CreateNoteForm from './components/CreateNoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -73,13 +75,6 @@ const App = () => {
       });
   };
 
-const noteForm = () => (
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={handleNoteChange} />
-      <button type="submit">Save</button>
-    </form>
-  );
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -104,7 +99,6 @@ const noteForm = () => (
 
 const handleLogOut = (e)=> {
   e.preventDefault()
-  console.log("logo out clicked")
   window.localStorage.clear()
   setUser(null)
 }
@@ -115,6 +109,7 @@ const handleLogOut = (e)=> {
       <Notification message={errorMessage} />
 
       {user === null && 
+   <Toggable buttonLabel='Login'>
       <LoginForm 
       handleLogin={handleLogin}
       username={username}
@@ -122,13 +117,19 @@ const handleLogOut = (e)=> {
       handleUsernameChange={({ target }) => setUsername(target.value)}
       handlePasswordChange={({ target }) => setPassword(target.value)}
 
-      />}
+      />
+  </Toggable>}
       {user && (
         <div>
           <p>{user.username} is logged in</p>
           <LogOut handleLogOut={handleLogOut}/>
-          {noteForm()}
-        
+          <Toggable buttonLabel='Create New Note'>
+            <CreateNoteForm 
+            addNote={addNote}
+            newNote={newNote}
+            handleNoteChange={handleNoteChange}
+          />
+          </Toggable>
         </div>
       )}
 
