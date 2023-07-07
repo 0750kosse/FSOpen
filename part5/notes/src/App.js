@@ -1,6 +1,5 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-
 import Note from "./components/Note";
 import notesServices from "./services/notes";
 import loginServices from "./services/login";
@@ -12,7 +11,6 @@ import CreateNoteForm from './components/CreateNoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("a new note");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
@@ -34,21 +32,12 @@ const App = () => {
     }
   }, []);
 
-  const addNote = (e) => {
-    e.preventDefault();
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-    };
-
-    notesServices.create(noteObject).then((createdNote) => {
+  const addNote = (noteObject) => {
+   notesServices
+   .create(noteObject)
+   .then((createdNote) => {
       setNotes([...notes, createdNote]);
-      setNewNote("");
-    });
-  };
-
-  const handleNoteChange = (e) => {
-    setNewNote(e.target.value);
+   });
   };
 
   const notesToShow = showAll
@@ -116,8 +105,7 @@ const handleLogOut = (e)=> {
       password={password}
       handleUsernameChange={({ target }) => setUsername(target.value)}
       handlePasswordChange={({ target }) => setPassword(target.value)}
-
-      />
+  />
   </Toggable>}
       {user && (
         <div>
@@ -125,10 +113,9 @@ const handleLogOut = (e)=> {
           <LogOut handleLogOut={handleLogOut}/>
           <Toggable buttonLabel='Create New Note'>
             <CreateNoteForm 
-            addNote={addNote}
-            newNote={newNote}
-            handleNoteChange={handleNoteChange}
-          />
+              addNote={addNote}
+            
+/>
           </Toggable>
         </div>
       )}
