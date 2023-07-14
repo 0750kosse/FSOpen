@@ -11,11 +11,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername]= useState("")
   const [password, setPassword]= useState("")
-  const [newBlog, setNewBlog] = useState({
-    title:'',
-    author:'',
-    url:''
-  })
+  
+
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage]= useState(null)
   
@@ -71,28 +68,14 @@ const App = () => {
     setUser(null)
   }
 
-// Grabs inputs value, and sets this onto newBlog
-  const handleNewBlogChange = (e) => {
-    e.preventDefault()
-    const value = e.target.value
-    setNewBlog({...newBlog, [e.target.name]:value})
-  }
-
-// adds newBlog to the main blogs state
-  const addBlog = (e)=> {
-    e.preventDefault()
-    blogService.createBlog(newBlog).then((createdBlog) => {
+  // adds param blogObject to the main blogs state
+  const addBlog = (blogObject)=> {
+    blogService.createBlog(blogObject).then((createdBlog) => {
       setBlogs([...blogs, createdBlog])
-      setNewBlog({
-        title:'',
-        author:'',
-        url:''
-      })
       setSuccessMessage(`Added new blog`);
       successTimeOut()
     })
 }
-
 return (
  
     <div>
@@ -112,10 +95,8 @@ return (
           user={user}
           blogs={blogs}
           handleLogOut={handleLogOut}
-          newBlog={newBlog}
           addBlog={addBlog}
-          handleNewBlogChange={handleNewBlogChange}
-          />
+        />
         }
       </div>
     </div>

@@ -3,7 +3,7 @@ import BlogForm from "../components/BlogForm"
 import UserLogOut from '../components/UserLogOut'
 
 const LoggedInContent = ({newBlog, handleNewBlogChange, addBlog,user,blogs, handleLogOut }) => {
-  return (
+ return (
     <div>
       <UserLogOut
           user={user}
